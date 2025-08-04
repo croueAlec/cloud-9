@@ -1,4 +1,5 @@
 IMAGE_NAME="control_node"
+AUTO_START="false"
 
 all: build run
 
@@ -8,7 +9,7 @@ build:
 
 run:
 	@echo Running
-	@docker run -it --name ${IMAGE_NAME} ${IMAGE_NAME} bash
+	@docker run -it -e AUTO_START="${AUTO_START}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
 
 clean:
 	@echo Cleaning
