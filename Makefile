@@ -25,7 +25,7 @@ vup:
 	@echo Building and starting the vagrant VM
 	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant up
 
-vdestroy:
+vdes:
 	@echo Destroying the vagrant VM
 	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
 
