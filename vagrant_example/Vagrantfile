@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
 
   # Variables
   vm_name = "node1"
-  vm_box = "debian/bookworm64"
+  vm_box = "ubuntu/focal64"
   vm_ip = ENV['VM_IP'] || "192.168.60.60" # This defines the VM ip using the ENV varible to match it to Ansible's config
   vm_memory = "1024"
   vm_cpu = 1
