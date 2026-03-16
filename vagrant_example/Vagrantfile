@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Variables
+  vm_name = "node1"
+  vm_box = "debian/bookworm64"
+  vm_ip = ENV['VM_IP'] || "192.168.60.60" # This defines the VM ip using the ENV varible to match it to Ansible's config
+  vm_memory = "1024"
+  vm_cpu = 1
+
+  # Config
+  config.vm.box = vm_box
+  config.vm.hostname = vm_name
+  config.vm.box_check_update = false
+
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "private_network", ip: vm_ip
+
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  config.vm.provider "virtualbox" do |vb|
+    # vb.gui = true
+    vb.customize ["modifyvm", :id, "--name", vm_name]
+
+    vb.cpus = vm_cpu
+    vb.memory = vm_memory
+  end
+
+  config.vm.provision "shell", path: "provision.sh"
+end

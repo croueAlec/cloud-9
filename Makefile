@@ -1,7 +1,12 @@
 IMAGE_NAME="control_node"
 AUTO_START="false"
 
+export VM_IP=192.168.60.60
+VAGRANT_FILE_PATH="./vagrant_example/Vagrantfile"
+
 all: build run
+
+test: vup test_build test_run
 
 build:
 	@echo Building
@@ -15,5 +20,17 @@ clean:
 	@echo Cleaning
 	@docker stop $(docker ps -aq) || true
 	@docker system prune -af
+
+vup:
+	@echo Building and starting the vagrant VM
+	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant up
+
+vdestroy:
+	@echo Destroying the vagrant VM
+	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
+
+vssh:
+	@echo SSH access into the vagrant VM
+	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant ssh
 
 re: clean all
