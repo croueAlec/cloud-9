@@ -2,7 +2,7 @@ FROM python:3.13-slim-bullseye
 
 # Basic installation
 RUN	apt-get update && apt-get upgrade -y && \
-	apt-get install -y less ssh && \
+	apt-get install -y less ssh vim && \
 	echo "alias c=clear" >> /root/.bashrc
 
 # Ansible installation
