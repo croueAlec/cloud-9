@@ -1,0 +1,12 @@
+---
+- name: Test first play
+  hosts: inception_nodes
+  tasks:
+    - name: Create test group
+      ansible.builtin.group:
+        name: test_group
+    - name: Create test user and add to test group
+      ansible.builtin.user: 
+        name: test_user
+        comment: This is the test user
+        group: test_group
