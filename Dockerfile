@@ -3,7 +3,7 @@ FROM python:3.13-slim-bullseye
 # Basic installation
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get install -y less && \
-	echo "alias c=clear" >> ~/.bashrc && source ~/.bashrc
+	echo "alias c=clear" >> /root/.bashrc
 
 # Ansible installation
 RUN apt-get update && apt-get upgrade -y && \

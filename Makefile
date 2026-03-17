@@ -15,7 +15,7 @@ build:
 
 run:
 	@echo Running
-	@docker run -it -e AUTO_START="${AUTO_START}" ANSIBLE_TARGET_IP="${VM_IP}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
+	@docker run -it -e AUTO_START="${AUTO_START}" -e ANSIBLE_TARGET_IP="${VM_IP}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
 
 clean:
 	@echo Cleaning
