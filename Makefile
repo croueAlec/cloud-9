@@ -2,6 +2,7 @@ IMAGE_NAME="control_node"
 AUTO_START="false"
 
 export VM_IP=192.168.60.60
+export VAGRANT_HOME=/home/acroue/goinfre/.vagrant.d
 VAGRANT_FILE_PATH="./vagrant_example/Vagrantfile"
 
 all: build run
@@ -14,7 +15,7 @@ build:
 
 run:
 	@echo Running
-	@docker run -it -e AUTO_START="${AUTO_START}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
+	@docker run -it -e AUTO_START="${AUTO_START}" ANSIBLE_TARGET_IP="${VM_IP}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
 
 clean:
 	@echo Cleaning
