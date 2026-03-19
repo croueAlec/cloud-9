@@ -5,13 +5,15 @@ Vagrant.configure("2") do |config|
 
   # Variables
   vm_name = "node1"
-  vm_box = "ubuntu/focal64"
+  vm_box = "generic/ubuntu2004"
+  box_version = "4.3.12"
   vm_ip = ENV['VM_IP'] || "192.168.60.60" # This defines the VM ip using the ENV varible to match it to Ansible's config
   vm_memory = "1024"
   vm_cpu = 1
 
   # Config
   config.vm.box = vm_box
+  config.vm.box_version = box_version
   config.vm.hostname = vm_name
   config.vm.box_check_update = false
 
@@ -22,13 +24,47 @@ Vagrant.configure("2") do |config|
 
   # config.vm.synced_folder ".", "/vagrant", disabled: true
 
-  config.vm.provider "virtualbox" do |vb|
-    # vb.gui = true
-    vb.customize ["modifyvm", :id, "--name", vm_name]
+  # config.vm.provider "virtualbox" do |vb|
+  #   # vb.gui = true
+  #   vb.customize ["modifyvm", :id, "--name", vm_name]
 
-    vb.cpus = vm_cpu
-    vb.memory = vm_memory
+  #   vb.cpus = vm_cpu
+  #   vb.memory = vm_memory
+  # end
+
+  # config.vm.provision "shell", path: "vagrant_example/provision.sh"
+
+  config.vm.provision "shell" do |s|
+    # Paste the public key printed during `docker build` here
+    ssh_pub_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA0XkP0+gQ1WIQ8KvOQbO5RxaBva1kytB86mo5B/Rygm root@buildkitsandbox"
+ 
+    s.inline = <<-SHELL
+      # Fix the broken apt hook first
+      chmod -x /usr/lib/cnf-update-db
+
+      # Install Python 3.9 from deadsnakes without breaking system Python
+      add-apt-repository -y ppa:deadsnakes/ppa
+      apt-get update -q
+      apt-get install -y python3.9 python3.9-distutils
+
+      # Do NOT change the default python3 symlink — leave it pointing to 3.8
+      # so apt_pkg stays intact
+      # Make sure vagrant user ssh dir exists
+      mkdir -p /home/vagrant/.ssh
+      chmod 700 /home/vagrant/.ssh
+ 
+      # Authorise the Ansible control node public key
+      echo "#{ssh_pub_key}" >> /home/vagrant/.ssh/authorized_keys
+      chmod 600 /home/vagrant/.ssh/authorized_keys
+      chown -R vagrant:vagrant /home/vagrant/.ssh
+ 
+      # Allow password-less sudo for vagrant (usually already set on this box)
+      echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant
+      chmod 0440 /etc/sudoers.d/vagrant
+ 
+      # Install Python3 so Ansible can run modules
+      # apt-get update -q && apt-get install -y python3
+    SHELL
   end
 
-  config.vm.provision "shell", path: "vagrant_example/provision.sh"
 end

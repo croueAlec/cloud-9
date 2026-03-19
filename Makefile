@@ -58,10 +58,11 @@ vup: init_ssh_key
 
 vdes:
 	@echo "$(RED)! Destroying$(DEFAULT) Vagrant VMs"
-	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
+	@rm -rf ./vagrant ${VAGRANT_HOME}
+	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
 
 vssh:
 	@echo "$(GREEN)* Running $(BWHITE)$@$(DEFAULT) Vagrant SSH"
-	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant ssh
+	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant ssh
 
 re: clean all

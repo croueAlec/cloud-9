@@ -9,6 +9,7 @@ Ansible uses control-nodes to deploy on remote nodes. It uses a set of Yaml inst
 ### Testing
 
 For testing purposes I made a vagrant file that creates remote nodes to apply a configuration to.
+It's purpose is to create automatically a Virtual Machine.
 
 ```sh
 make basic_test

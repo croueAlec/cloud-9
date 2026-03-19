@@ -18,8 +18,12 @@ RUN	apt-get update && apt-get upgrade -y && \
 # Setup SSH connection
 ARG	ANSIBLE_TARGET_IP
 ENV	ANSIBLE_TARGET_IP=${ANSIBLE_TARGET_IP}
-RUN	mkdir -p /root/.ssh/
-COPY	./vagrant_example/ssh_key /root/.ssh
+RUN	mkdir -p /root/.ssh/ && chmod 700 /root/.ssh
+# COPY	./vagrant_example/ssh_key /root/.ssh
+
+RUN ssh-keygen -t ed25519 -f /root/.ssh/ssh_key -N "" && \
+	echo "==== ANSIBLE CONTROL NODE PUBLIC KEY ====" && \
+	cat /root/.ssh/ssh_key.pub
 
 WORKDIR /home/
 COPY ./src .
