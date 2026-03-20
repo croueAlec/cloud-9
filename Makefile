@@ -58,8 +58,8 @@ vup: init_ssh_key
 
 vdes:
 	@echo "$(RED)! Destroying$(DEFAULT) Vagrant VMs"
-	@rm -rf ./vagrant ${VAGRANT_HOME}
 	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
+	@rm -rf ./.vagrant
 
 vssh:
 	@echo "$(GREEN)* Running $(BWHITE)$@$(DEFAULT) Vagrant SSH"
