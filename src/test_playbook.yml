@@ -1,19 +1,10 @@
 ---
-- name: Test first play
-  hosts: inception_nodes
-  tasks:
-    - name: Create test group
-      ansible.builtin.group:
-        name: test_group
-    - name: Create test user and add to test group
-      ansible.builtin.user: 
-        name: test_user
-        comment: This is the test user
-        group: test_group
-
 - name: Install docker
   hosts: inception_nodes
   tasks:
+    - name: Set Docker architecture
+      set_fact:
+        docker_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
     - name: Add dependencies
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -26,10 +17,11 @@
     - name: Add docker GPG key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
-    - name:
+    - name: Add Docker repository
       apt_repository:
-        repo: deb [arch=$(dpkg --print-architecture)]  https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+        repo: deb [arch={{ docker_arch }}]  https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
         state: present
+        update-cache: yes
     - name: Add dependencies
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -41,33 +33,24 @@
         - containerd.io
         - docker-buildx-plugin
         - docker-compose-plugin
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
 
-- name: First play - create group1 and user1
-  hosts: localhost
-  become: true
+- name: Set-up inception
+  hosts: inception_nodes
   tasks:
-    - name: Create group1
-      ansible.builtin.group:
-        name: group1
-        state: present
-
-    - name: Create user1 and add to group1
-      ansible.builtin.user:
-        name: user1
-        group: group1
-        state: present
-
-- name: Second play - create group2 and user2
-  hosts: localhost
-  become: true
-  tasks:
-    - name: Create group2
-      ansible.builtin.group:
-        name: group2
-        state: present
-
-    - name: Create user2 and add to group2
-      ansible.builtin.user:
-        name: user2
-        group: group2
-        state: present
+    - name: Create inception user
+      ansible.builtin.user: 
+        name: inception
+        comment: This user runs the inception stack
+        group: docker
+    - name: Copy inception sources
+      ansible.builtin.copy: # change built in
+        src: "{{ playbook_dir }}/Inception"
+        dest: /home/user/inception/
+        mode: '0755'
+        owner: inception
+        group: inception
+        recurse: yes
