@@ -1,0 +1,30 @@
+---
+# tasks file for preliminary_checks
+
+- name: Check if vault file exists
+  ansible.builtin.stat:
+    path: "{{ ansible_vault_path }}"
+  register: vault_status
+
+- name: Fail if the vault file does not exist
+  ansible.builtin.debug:
+    msg: "Vault file does not exist"
+  when: vault_status.stat.exists == false  # catches the 'false' status of vault_status
+  failed_when: vault_status.stat.exists == false  # throws an error if it is 'false'
+
+- name: Check if vault is decryptable
+  ansible.builtin.include_vars:
+    file: "{{ ansible_vault_path }}"
+  register: vault_vars
+
+- name: Fail if unable to decrypt the vault
+  ansible.builtin.debug:
+    msg: "Unable to decrypt the vault file. Check the password or the file"
+  when: vault_vars is not defined
+
+- name: Fail if the mandatory secrets are not defined
+  fail:
+    msg: "The variable '{{ item }}' is not defined"
+  loop:
+    - inception_user_password
+  when: (vars[item] | default(None)) is none
