@@ -5,24 +5,32 @@
     ansible_vault_path: "./src/secrets.yml"
   gather_facts: false
   tasks:
+
     - name: Check if vault file exists
       ansible.builtin.stat:
         path: "{{ ansible_vault_path }}"
       register: vault_status
-      failed_when: vault_status.stat.exists == false
-      msg: "Vault file does not exist"
+
+    - name: Fail if the vault file does not exist
+      ansible.builtin.debug:
+        msg: "Vault file does not exist"
+      when: vault_status.stat.exists == false # catches the 'false' status of vault_status
+      failed_when: vault_status.stat.exists == false  # throws an error if it is 'false'
 
     - name: Check if vault is decryptable
       ansible.builtin.include_vars:
         file: "{{ ansible_vault_path }}"
       register: vault_vars
-      failed_when: vault_vars is not defined
-      msg: "Unable to decrypt the vault file. Check the password or the file"
+
+    - name: Fail if the vault is not decryptable
+      ansible.builtin.debug:
+        msg: "Vault file is not decryptable"
+      when: vault_vars is not defined
+      failed_when: vault_vars is not defined 
 
     - name: Check if the mandatory secrets are defined
-      debug:
-        msg: "The variable '{{ item }}' is defined"
-      when: lookup('vars', item) is defined
+      failed_when: lookup('vars', item) is not defined
+      msg: "The variable '{{ item }}' is not defined"
       loop:
         - inception_user_password
 
