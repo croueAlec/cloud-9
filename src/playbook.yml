@@ -7,6 +7,8 @@
     - name: Run preliminary checks
       import_role:
         name: preliminary_checks
+      tags:
+      - preliminary_checks
 
 - name: Cloud-1 - Configuration
   hosts:  inception_nodes
@@ -16,7 +18,11 @@
     - name: Docker Install
       import_role:
         name: docker_install
+      tags:
+      - docker_install
 
     - name: Node Set-up
       import_role:
         name: setup
+      tags:
+      - setup
