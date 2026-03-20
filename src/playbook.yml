@@ -1,0 +1,22 @@
+---
+- name: Cloud-1 - Pre-deployment
+  hosts: localhost
+  vars:
+    ansible_vault_path: "./secrets.yml"
+  tasks:
+    - name: Run preliminary checks
+      import_role:
+        name: preliminary_checks
+
+- name: Cloud-1 - Configuration
+  hosts:  inception_nodes
+  vars_files:
+    - "./secrets.yml"
+  tasks:
+    - name: Docker Install
+      import_role:
+        name: docker_install
+
+    - name: Node Set-up
+      import_role:
+        name: setup
