@@ -92,6 +92,8 @@
 
 - name: Set-up inception
   hosts: inception_nodes
+  vars_files:
+    - "./secrets.yml"
   tasks:
 
     - name: Create inception user
