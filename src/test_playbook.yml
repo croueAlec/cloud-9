@@ -2,7 +2,7 @@
 - name: Preliminary control-node checks
   hosts: localhost
   vars:
-    ansible_vault_path: "./src/secrets.yml"
+    ansible_vault_path: "./secrets.yml"
   gather_facts: false
   tasks:
 
@@ -22,17 +22,17 @@
         file: "{{ ansible_vault_path }}"
       register: vault_vars
 
-    - name: Fail if the vault is not decryptable
+    - name: Fail if unable to decrypt the vault
       ansible.builtin.debug:
-        msg: "Vault file is not decryptable"
+        msg: "Unable to decrypt the vault file. Check the password or the file"
       when: vault_vars is not defined
-      failed_when: vault_vars is not defined 
 
-    - name: Check if the mandatory secrets are defined
-      failed_when: lookup('vars', item) is not defined
-      msg: "The variable '{{ item }}' is not defined"
+    - name: Fail if the mandatory secrets are not defined
+      fail:
+        msg: "The variable '{{ item }}' is not defined"
       loop:
         - inception_user_password
+      when: lookup('vars', item) is not defined
 
 - name: Install docker
   hosts: inception_nodes
