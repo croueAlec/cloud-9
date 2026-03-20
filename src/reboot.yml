@@ -1,0 +1,20 @@
+# This playbook can reboot all or a specific target.
+# Use --extra-vars <target name or group> to specify the target.
+---
+- name: Reboot target(s) routine
+  hosts: "{{ target | default('inception_nodes') }}"
+  tasks:
+    - name: Print Host(s)
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}"
+
+    - pause:
+        prompt: "Do you want to reboot the target(s) (yes/no)?"
+      register: reboot_confirmation
+      delegate_to: localhost
+
+    - name: Reboot target(s)
+      ansible.builtin.reboot:
+        msg: "Rebooting machine"
+        test_command: "whoami"
+      when: reboot_confirmation.user_input == "yes"
