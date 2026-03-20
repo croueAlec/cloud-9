@@ -1,10 +1,51 @@
 ---
+- name: Preliminary control-node checks
+  hosts: localhost
+  vars:
+    ansible_vault_path: "./src/secrets.yml"
+  gather_facts: false
+  tasks:
+    - name: Check if vault file exists
+      ansible.builtin.stat:
+        path: "{{ ansible_vault_path }}"
+      register: vault_status
+      failed_when: vault_status.stat.exists == false
+      msg: "Vault file does not exist"
+
+    - name: Check if vault is decryptable
+      ansible.builtin.include_vars:
+        file: "{{ ansible_vault_path }}"
+      register: vault_vars
+      failed_when: vault_vars is not defined
+      msg: "Unable to decrypt the vault file. Check the password or the file"
+
+    - name: Check if the mandatory secrets are defined
+      debug:
+        msg: "The variable '{{ item }}' is defined"
+      when: lookup('vars', item) is defined
+      loop:
+        - inception_user_password
+
 - name: Install docker
   hosts: inception_nodes
   tasks:
+
+    - name: Remove dependencies
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        update-cache: yes
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
     - name: Set Docker architecture
       set_fact:
         docker_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
     - name: Add dependencies
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -14,6 +55,7 @@
         - ca-certificates
         - curl
         - gnupg
+
     - name: Add docker GPG key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
@@ -22,6 +64,7 @@
         repo: deb [arch={{ docker_arch }}]  https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
         state: present
         update-cache: yes
+
     - name: Add dependencies
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -33,6 +76,7 @@
         - containerd.io
         - docker-buildx-plugin
         - docker-compose-plugin
+
     - name: Create docker group
       group:
         name: docker
@@ -41,16 +85,21 @@
 - name: Set-up inception
   hosts: inception_nodes
   tasks:
+
     - name: Create inception user
       ansible.builtin.user: 
-        name: inception
+        name: "{{ deploy_user }}"
         comment: This user runs the inception stack
-        group: docker
+        append: yes
+        create_home:
+        groups: docker
+        password: "{{ inception_user_password }}" # The password is defined in the secret.yml vault
+
     - name: Copy inception sources
-      ansible.builtin.copy: # change built in
+      ansible.builtin.copy:
         src: "{{ playbook_dir }}/Inception"
-        dest: /home/user/inception/
+        dest: "/home/{{ deploy_user }}/"
         mode: '0755'
-        owner: inception
-        group: inception
-        recurse: yes
+        directory_mode: '0755'
+        owner: "{{ deploy_user }}"
+        group: docker
