@@ -1,0 +1,19 @@
+---
+# tasks file for setup
+- name: Create inception user
+  ansible.builtin.user: 
+    name: "{{ deploy_user }}"
+    comment: This user runs the inception stack
+    append: yes
+    create_home:
+    groups: docker
+    password: "{{ inception_user_password }}" # The password is defined in the secret.yml vault
+
+- name: Copy inception sources
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/Inception"
+    dest: "/home/{{ deploy_user }}/"
+    mode: '0755'
+    directory_mode: '0755'
+    owner: "{{ deploy_user }}"
+    group: docker
