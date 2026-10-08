@@ -32,11 +32,11 @@ test: vup test_build test_run
 
 build: init_ssh_key
 	@printf "$(CYAN)- Building$(DEFAULT) Docker Control Node\n"
-	@docker build --build-arg ANSIBLE_TARGET_IP="${VM_IP}" --tag ${IMAGE_NAME} .
+	@docker build --tag ${IMAGE_NAME} .
 
 run:
 	@printf "$(GREEN)* Running $(BWHITE)Docker Control Node$(DEFAULT)\n"
-	@docker run -it -e AUTO_START="${AUTO_START}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
+	@docker run -e ANSIBLE_TARGET_IP=${VM_IP} -it -e AUTO_START="${AUTO_START}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
 
 clean:
 	@printf "$(RED)! Cleaning$(DEFAULT)\n"

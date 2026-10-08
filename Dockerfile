@@ -17,8 +17,7 @@ RUN	apt-get update && apt-get upgrade -y && \
 	apt-get clean
 
 # Setup SSH connection
-ARG	ANSIBLE_TARGET_IP
-ENV	ANSIBLE_TARGET_IP=${ANSIBLE_TARGET_IP}
+ENV	ANSIBLE_TARGET_IP=""
 RUN	mkdir -p /root/.ssh/ && chmod 700 /root/.ssh
 COPY vagrant_example/ssh_key /root/.ssh/ssh_key
 RUN	chmod 600 /root/.ssh/ssh_key
