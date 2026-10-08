@@ -20,7 +20,6 @@ IMAGE_NAME="control_node"
 AUTO_START="false"
 
 export VM_IP=192.168.60.60
-export VAGRANT_HOME=/tmp/.vagrant.d
 VAGRANT_FILE_PATH="./vagrant_example/Vagrantfile"
 
 ################################################################################
@@ -32,37 +31,38 @@ all: build run
 test: vup test_build test_run
 
 build: init_ssh_key
-	@echo "$(CYAN)- Building$(DEFAULT) Docker Control Node"
+	@printf "$(CYAN)- Building$(DEFAULT) Docker Control Node\n"
 	@docker build --build-arg ANSIBLE_TARGET_IP="${VM_IP}" --tag ${IMAGE_NAME} .
 
 run:
-	@echo "$(GREEN)* Running $(BWHITE)$@$(DEFAULT) Docker Control Node"
+	@printf "$(GREEN)* Running $(BWHITE)Docker Control Node$(DEFAULT)\n"
 	@docker run -it -e AUTO_START="${AUTO_START}" --name ${IMAGE_NAME} ${IMAGE_NAME} bash
 
 clean:
-	@echo "$(RED)! Cleaning$(DEFAULT)"
+	@printf "$(RED)! Cleaning$(DEFAULT)\n"
 	@docker stop $(docker ps -aq) || true
 	@docker system prune -af
 
 init_ssh_key:
-	if [ ! -f "./vagrant_example/ssh_key" ]; then \
-		echo Creating missing ssh_key; \
-		ssh-keygen -f ./vagrant_example/ssh_key -t rsa -N ""; \
+	@if [ ! -f "./vagrant_example/ssh_key" ]; then \
+		printf "$(CYAN)> Copying$(DEFAULT) vagrant VM $(BWHITE)ssh_key$(DEFAULT)\n"; \
+		cp ${VAGRANT_DOTFILE_PATH}/machines/default/virtualbox/private_key vagrant_example/ssh_key; \
 	fi
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Test Rules ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-vup: init_ssh_key
-	@echo "$(CYAN)- Compiling$(DEFAULT) vagrant VM"
-	VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant up
+vup:
+	@printf "$(CYAN)- Compiling$(DEFAULT) vagrant VM\n"
+	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant up
+	
 
 vdes:
-	@echo "$(RED)! Destroying$(DEFAULT) Vagrant VMs"
+	@printf "$(RED)! Destroying$(DEFAULT) Vagrant VMs\n"
 	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant destroy -f
-	@rm -rf ./.vagrant
+	@rm -rf ${VAGRANT_DOTFILE_PATH} vagrant_example/ssh_key
 
 vssh:
-	@echo "$(GREEN)* Running $(BWHITE)$@$(DEFAULT) Vagrant SSH"
+	@printf "$(GREEN)* Running $(BWHITE)Vagrant SSH$(DEFAULT)\n"
 	@VAGRANT_VAGRANTFILE=${VAGRANT_FILE_PATH} vagrant ssh
 
 re: clean all

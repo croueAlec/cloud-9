@@ -20,7 +20,7 @@ RUN	apt-get update && apt-get upgrade -y && \
 ARG	ANSIBLE_TARGET_IP
 ENV	ANSIBLE_TARGET_IP=${ANSIBLE_TARGET_IP}
 RUN	mkdir -p /root/.ssh/ && chmod 700 /root/.ssh
-COPY .vagrant/machines/default/virtualbox/private_key /root/.ssh/ssh_key
+COPY vagrant_example/ssh_key /root/.ssh/ssh_key
 RUN	chmod 600 /root/.ssh/ssh_key
 
 WORKDIR /home/
