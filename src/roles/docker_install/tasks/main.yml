@@ -27,14 +27,21 @@
     - curl
     - gnupg
 
-- name: Add docker GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
 - name: Add Docker repository
-  apt_repository:
-    repo: deb [arch={{ docker_arch }}]  https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+  ansible.builtin.deb822_repository:
+    name: docker
+    types:
+      - deb
+    uris:
+      - https://download.docker.com/linux/ubuntu
+    suites:
+      - "{{ ansible_distribution_release }}"
+    components:
+      - stable
+    architectures:
+      - "{{ docker_arch }}"
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
     state: present
-    update-cache: yes
 
 - name: Add dependencies
   ansible.builtin.apt:
