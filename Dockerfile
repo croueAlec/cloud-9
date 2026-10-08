@@ -1,4 +1,4 @@
-FROM python:3.8.20-slim-bullseye
+FROM python:3.14.8-slim-bookworm
 
 # Basic installation
 RUN	apt-get update && apt-get upgrade -y && \
