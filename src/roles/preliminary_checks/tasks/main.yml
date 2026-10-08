@@ -27,4 +27,4 @@
     msg: "The variable '{{ item }}' is not defined"
   loop:
     - inception_user_password
-  when: (vars[item] | default(None)) is none
+  when: lookup('ansible.builtin.varnames', 'item') is undefined
