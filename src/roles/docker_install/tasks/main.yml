@@ -15,7 +15,7 @@
 
 - name: Set Docker architecture
   set_fact:
-    docker_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    docker_arch: "{{ 'amd64' if ansible_tasks['architecture'] == 'x86_64' else ansible_tasks['architecture'] }}"
 
 - name: Add dependencies
   ansible.builtin.apt:
@@ -35,7 +35,7 @@
     uris:
       - https://download.docker.com/linux/ubuntu
     suites:
-      - "{{ ansible_distribution_release }}"
+      - "{{ ansible_tasks['distribution_release'] }}"
     components:
       - stable
     architectures:
