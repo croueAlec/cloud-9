@@ -41,6 +41,7 @@
     architectures:
       - "{{ docker_arch }}"
     signed_by: https://download.docker.com/linux/ubuntu/gpg
+    install_python_debian: true
     state: present
 
 - name: Add dependencies
