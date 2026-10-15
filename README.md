@@ -22,3 +22,39 @@ make advanced_test
 The advanced test starts a network of 3 nodes using a Vagrantfile.
 
 Both of those tests can be targeted using Ansible.
+
+
+## Inception
+
+Inception is a 42common-core project. It's goal is to use Docker to setup and deploy a basic Wordpress stack using Wordpress, nginx, and mariadb.
+
+All username and passwords used here are specified in [secrets.yml](./src/secrets.yml).
+
+### Mariadb
+
+Mariadb is the database our website uses to store it's data.
+
+It is possible to interact with it using the following commands
+```sh
+docker exec -it mariadb  /bin/sh
+mariadb -h 127.0.0.1 -P 3306 -u <mariadb user> -p
+<mariadb password>
+
+# Inside mariadb
+show databases;
+use <database>;
+
+create table <table> (
+	name VARCHAR(50),
+	yob CHAR(4),
+	lastname VARCHAR(50)
+	);
+show tables;
+describe <table>;
+
+insert into <table> (name, lastname, yob)
+values('john', 'doe', '1970');
+select * from <table>;
+
+quit
+```
