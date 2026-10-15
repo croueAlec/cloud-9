@@ -1,0 +1,19 @@
+version: "1.0"
+
+services:
+  mariadb:
+    container_name: mariadb
+    build:
+      context: maria-db
+      dockerfile: Dockerfile
+    image: maria-db-img
+    expose:
+      - "3306"
+    networks:
+      - cloud-1
+    restart: unless-stopped
+
+
+networks:
+  cloud-1:
+    driver: bridge
