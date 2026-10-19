@@ -7,13 +7,53 @@ services:
       context: maria-db
       dockerfile: Dockerfile
     image: maria-db-img
-    expose:
-      - "3306"
+    environment:
+      - MARIADB_DATABASE=
+      - MARIADB_USER=
+      - MARIADB_PASSWORD=
+      - MARIADB_ROOT_PASSWORD=
+    volumes:
+      - db_data:/var/lib/mysql
     networks:
       - cloud-1
     restart: unless-stopped
 
+  wordpress:
+    container_name: wordpress
+    build:
+      context: wordpress
+      dockerfile: Dockerfile
+    image: wordpress-img
+    environment:
+      - WORDPRESS_DB_HOST=mariadb:3306
+      - WORDPRESS_DB_NAME=test
+      - WORDPRESS_DB_USER=test_user
+      - WORDPRESS_DB_PASSWORD=password
+      - WORDPRESS_DB_ROOT_PASSWORD=root
+    volumes:
+      - wp_data:/var/www/html
+    networks:
+      - cloud-1
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    image: nginx-img
+    ports:
+      - 8080:80
+    networks:
+      - cloud-1
+    depends_on:
+      - wordpress
+    restart: unless-stopped
 
 networks:
   cloud-1:
     driver: bridge
+
+volumes:
+  db_data:
+  wp_data:
