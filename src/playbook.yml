@@ -8,10 +8,10 @@
       import_role:
         name: preliminary_checks
       tags:
-      - preliminary_checks
+        - preliminary_checks
 
 - name: Cloud-1 - Configuration
-  hosts:  inception_nodes
+  hosts: inception_nodes
   vars_files:
     - "./secrets.yml"
   tasks:
@@ -19,10 +19,21 @@
       import_role:
         name: docker_install
       tags:
-      - docker_install
+        - docker_install
 
     - name: Node Set-up
       import_role:
         name: setup
       tags:
-      - setup
+        - setup
+
+- name: Cloud-1 - Deployment
+  hosts: inception_nodes
+  vars_files:
+    - "./secrets.yml"
+  tasks:
+    - name: Deployment
+      import_role:
+        name: deployment
+      tags:
+        - deployment
