@@ -23,8 +23,8 @@
   when: vault_vars is not defined
 
 - name: Fail if the mandatory secrets are not defined
-  fail:
-    msg: "The variable '{{ item }}' is not defined"
+  ansible.builtin.fail:
+    msg: "The variable '{{ item }}' is null or undefined"
   loop:
     - inception_machine_user_password
     - vault_mariadb_database
@@ -35,4 +35,4 @@
     - vault_wordpress_db_user
     - vault_wordpress_db_password
     - vault_wordpress_db_root_password
-  when: lookup('ansible.builtin.varnames', 'item') is undefined
+  when: lookup('ansible.builtin.vars', item, default='') | string | trim | length == 0
