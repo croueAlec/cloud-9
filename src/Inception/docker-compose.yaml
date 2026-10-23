@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
     image: nginx-img
     ports:
-      - 8080:80
+      - 80:80
     networks:
       - cloud-1
     depends_on:

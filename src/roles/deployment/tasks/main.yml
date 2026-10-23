@@ -4,7 +4,7 @@
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /home/{{ deploy_user }}/Inception/.env
-    mode: "0644"
+    mode: "0600"
   no_log: true
 
 - name: Start Inception containers
@@ -15,5 +15,63 @@
       - up
       - -d
       - --build
-  args:
+    chdir: /home/{{ deploy_user }}/Inception/
+
+- name: Wait for WordPress configuration file
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - exec
+      - -T
+      - wordpress
+      - test
+      - -f
+      - /var/www/html/wp-config.php
+    chdir: "/home/{{ deploy_user }}/Inception"
+  register: wp_config_check
+  retries: 30
+  delay: 2
+  until: wp_config_check.rc == 0
+  changed_when: false
+
+- name: Setup wordpress configuration
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - exec
+      - -i
+      - wordpress
+      - wp
+      - core
+      - install
+      - "--url={{ ec2_public_ip }}"
+      - "--title={{ wordpress_title }}"
+      - "--admin_user={{ wordpress_admin_user }}"
+      - "--admin_email={{ wordpress_admin_email }}"
+      - "--prompt=admin_password"
+      - --allow-root
+    chdir: /home/{{ deploy_user }}/Inception
+    stdin: "{{ wordpress_admin_password }}"
+    stdin_add_newline: true
+  no_log: true
+
+- name: Publish initial post
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - exec
+      - -i
+      - wordpress
+      - wp
+      - post
+      - create
+      - --post_type=page
+      - --post_author="1"
+      - "--post_title=Welcome on this Star Wars blog"
+      - "--post_content=I am one with the force, and the force is with me"
+      - --post_status=publish
+      - --allow-root
     chdir: /home/{{ deploy_user }}/Inception

@@ -27,6 +27,7 @@
     msg: "The variable '{{ item }}' is null or undefined"
   loop:
     - inception_machine_user_password
+    - ec2_public_ip
     - vault_mariadb_database
     - vault_mariadb_user
     - vault_mariadb_password
@@ -34,4 +35,9 @@
     - vault_wordpress_db_name
     - vault_wordpress_db_user
     - vault_wordpress_db_password
+    - wordpress_title
+    - wordpress_admin_user
+    - wordpress_admin_email
+    - wordpress_admin_password
+
   when: lookup('ansible.builtin.vars', item, default='') | string | trim | length == 0
