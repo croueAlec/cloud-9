@@ -34,5 +34,4 @@
     - vault_wordpress_db_name
     - vault_wordpress_db_user
     - vault_wordpress_db_password
-    - vault_wordpress_db_root_password
   when: lookup('ansible.builtin.vars', item, default='') | string | trim | length == 0
