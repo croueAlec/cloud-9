@@ -1,18 +1,6 @@
 ---
 # tasks file for docker_install
 
-- name: Remove dependencies
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: absent
-    update-cache: yes
-  loop:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
-    - docker-buildx-plugin
-    - docker-compose-plugin
-
 - name: Set Docker architecture
   set_fact:
     docker_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
