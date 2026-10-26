@@ -77,8 +77,7 @@
     stdin_add_newline: true
   when: wp_installed.rc != 0
   no_log: true
-
-- name: Publish initial post
+- name: Setup initial Wordpress page
   ansible.builtin.command:
     argv:
       - docker
@@ -86,13 +85,5 @@
       - exec
       - -i
       - wordpress
-      - wp
-      - post
-      - create
-      - --post_type=page
-      - --post_author="1"
-      - "--post_title=Welcome on this Star Wars blog"
-      - "--post_content=I am one with the force, and the force is with me"
-      - --post_status=publish
-      - --allow-root
+      - ./setup/setup.sh
     chdir: /home/{{ deploy_user }}/Inception
