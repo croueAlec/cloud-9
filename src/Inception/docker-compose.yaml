@@ -7,6 +7,12 @@ services:
       context: maria-db
       dockerfile: Dockerfile
     image: maria-db-img
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     environment:
       - MARIADB_DATABASE=${MARIADB_DATABASE:?Required}
       - MARIADB_USER=${MARIADB_USER:?Required}
@@ -33,6 +39,9 @@ services:
       - wp_data:/var/www/html
     networks:
       - cloud-1
+    depends_on:
+      mariadb:
+        condition: service_healthy
     restart: unless-stopped
 
   nginx:
