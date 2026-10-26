@@ -28,14 +28,33 @@
       - test
       - -f
       - /var/www/html/wp-config.php
-    chdir: "/home/{{ deploy_user }}/Inception"
+  args:
+    chdir: /home/{{ deploy_user }}/Inception
   register: wp_config_check
   retries: 30
   delay: 2
   until: wp_config_check.rc == 0
   changed_when: false
 
-- name: Setup wordpress configuration
+- name: Check whether WordPress is installed
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - exec
+      - -T
+      - wordpress
+      - wp
+      - core
+      - is-installed
+      - --allow-root
+  args:
+    chdir: /home/{{ deploy_user }}/Inception
+  register: wp_installed
+  changed_when: false
+  failed_when: false
+
+- name: Setup Wordpress website
   ansible.builtin.command:
     argv:
       - docker
@@ -52,9 +71,11 @@
       - "--admin_email={{ wordpress_admin_email }}"
       - "--prompt=admin_password"
       - --allow-root
+  args:
     chdir: /home/{{ deploy_user }}/Inception
     stdin: "{{ wordpress_admin_password }}"
     stdin_add_newline: true
+  when: wp_installed.rc != 0
   no_log: true
 
 - name: Publish initial post
