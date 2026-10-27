@@ -1,5 +1,5 @@
 ---
-# tasks file for setup
+# tasks file for configuration
 - name: Create inception user
   ansible.builtin.user:
     name: "{{ deploy_user }}"

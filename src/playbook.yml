@@ -21,11 +21,11 @@
       tags:
         - docker_install
 
-    - name: Node Set-up
+    - name: Node Configuration
       import_role:
-        name: setup
+        name: configuration
       tags:
-        - setup
+        - configuration
 
 - name: Cloud-1 - Deployment
   hosts: inception_nodes
