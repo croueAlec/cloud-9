@@ -17,3 +17,36 @@
     directory_mode: "0755"
     owner: "{{ deploy_user }}"
     group: docker
+
+# The allowed ports are defined in ../vars/ports.yml
+- name: Load port variables
+  ansible.builtin.include_vars:
+    file: ports.yml
+
+- name: Deny incoming ports
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Deny routed ports
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: routed
+
+- name: Allow all outgoing traffic
+  community.general.ufw:
+    state: enabled
+    policy: allow
+    direction: outgoing
+
+- name: Allowed ports configuration
+  community.general.ufw:
+    rule: allow
+    direction: in
+    to_port: "{{ item.port }}"
+    proto: "{{ item.protocol }}"
+  loop: "{{ allowed_ports }}"
+  loop_control:
+    label: "{{ item.desc }} ({{ item.port }}/{{ item.protocol }})"
