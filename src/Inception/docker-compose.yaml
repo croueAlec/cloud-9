@@ -44,6 +44,19 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:5.2.3-apache
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_USER=${MARIADB_USER:?Required}
+      - PMA_PASSWORD=${MARIADB_PASSWORD:?Required}
+    networks:
+      - cloud-1
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
   nginx:
     container_name: nginx
     build:
