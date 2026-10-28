@@ -49,8 +49,6 @@ services:
     image: phpmyadmin:5.2.3-apache
     environment:
       - PMA_HOST=mariadb
-      - PMA_USER=${MARIADB_USER:?Required}
-      - PMA_PASSWORD=${MARIADB_PASSWORD:?Required}
     networks:
       - cloud-1
     depends_on:
