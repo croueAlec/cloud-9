@@ -32,9 +32,9 @@ services:
     image: wordpress-img
     environment:
       - WORDPRESS_DB_HOST=mariadb:3306
-      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:?Required} # test
-      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:?Required} # test_user
-      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:?Required} # password
+      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:?Required}
+      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:?Required}
+      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:?Required}
     volumes:
       - wp_data:/var/www/html
     networks:
@@ -49,6 +49,7 @@ services:
     image: phpmyadmin:5.2.3-apache
     environment:
       - PMA_HOST=mariadb
+      - PMA_ABSOLUTE_URI=https://${EC2_PUBLIC_IP:?Required}/phpmyadmin
     networks:
       - cloud-1
     depends_on:
@@ -63,6 +64,7 @@ services:
     image: nginx-img
     ports:
       - 80:80
+      - 443:443
     networks:
       - cloud-1
     depends_on:
