@@ -1,0 +1,23 @@
+---
+plugin: amazon.aws.aws_ec2
+profile: aws_deploy
+regions:
+  - eu-north-1
+
+filters:
+  instance-state-name: running
+
+hostnames:
+  - name: "tag:Name"
+    separator: "_"
+    prefix: "ip-address"
+  - ip-address
+
+compose:
+  ansible_host: public_ip_address
+  ansible_user: "'ubuntu'"
+
+  deploy_user: "'inception'"
+
+groups:
+  inception_nodes: true

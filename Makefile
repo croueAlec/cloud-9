@@ -26,13 +26,17 @@ VAGRANT_FILE_PATH="./vagrant_example/Vagrantfile"
 #                                     RULES                                    #
 ################################################################################
 
-all: build run
+all: check_aws_creds build run
 
-test: vup test_build test_run
+test: vup test_build run
 
-build: init_ssh_key
+build:
 	@printf "$(CYAN)- Building$(DEFAULT) Docker Control Node\n"
-	@docker build --tag ${IMAGE_NAME} .
+	@docker build --target aws --tag ${IMAGE_NAME} .
+
+test_build: init_ssh_key
+	@printf "$(CYAN)- Building$(DEFAULT) Docker Control Node\n"
+	@docker build --target vagrant_test --tag ${IMAGE_NAME} .
 
 run:
 	@printf "$(GREEN)* Running $(BWHITE)Docker Control Node$(DEFAULT)\n"
@@ -42,6 +46,16 @@ clean:
 	@printf "$(RED)! Cleaning$(DEFAULT)\n"
 	@docker stop $(docker ps -aq) || true
 	@docker system prune -af
+
+check_aws_creds:
+	@if [ ! -f ".aws_credentials" ]; then \
+		printf "$(RED)! Error$(DEFAULT) missing AWS credentials file : $(BWHITE).aws_credentials$(DEFAULT)\n"; \
+		exit 1; \
+	fi
+	@if [ ! -f "cloud-1.pem" ]; then \
+		printf "$(RED)! Error$(DEFAULT) missing AWS SSH key file : $(BWHITE)cloud-1.pem$(DEFAULT)\n"; \
+		exit 1; \
+	fi
 
 init_ssh_key:
 	@if [ ! -f "./vagrant_example/ssh_key" ]; then \

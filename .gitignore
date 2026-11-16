@@ -1,2 +1,4 @@
 .vagrant
 **/ssh_key*
+src/.aws_credentials
+src/*.pem
