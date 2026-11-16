@@ -12,16 +12,19 @@ For testing purposes I made a vagrant file that creates remote nodes to apply a 
 It's purpose is to create automatically a Virtual Machine.
 
 ```sh
-make basic_test
+make test
 ```
-The basic test starts a single node using a Vagrantfile.
 
-```sh
-make advanced_test
-```
-The advanced test starts a network of 3 nodes using a Vagrantfile.
+## Setting up the project
 
-Both of those tests can be targeted using Ansible.
+I use AWS ec2 for my remote nodes.
+You need to :
+- have an account
+- create an **IAM user** that has the `AmazonEC2FullAccess` permissions enabled, then save it's credentials as `./.aws_credentials` (In the IAM Service).
+- you need to download your `.pem` ssh key under the name `cloud-1.pem` (In the EC2 Service under `Network & Security > Key Pairs`).
+- create an **Launch Template** with a **Security Group** that allows the ssh, http, and https rules. Has the `Roles` and `Name` tags to the value `inception_nodes`. Set the default machine as `Ubuntu 24.04`. (Optionnal)
+
+
 
 
 ## Inception
