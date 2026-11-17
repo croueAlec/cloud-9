@@ -4,8 +4,14 @@
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /home/{{ deploy_user }}/Inception/.env
-    mode: "0600"
+    mode: "0777"
   no_log: true
+
+- name: Create cert.conf file
+  ansible.builtin.template:
+    src: templates/cert.conf.j2
+    dest: /home/{{ deploy_user }}/Inception/nginx/cert.conf
+    mode: "0600"
 
 - name: Start Inception containers
   ansible.builtin.command:
@@ -54,6 +60,10 @@
   changed_when: false
   failed_when: false
 
+- name: Assign instance numbers
+  ansible.builtin.set_fact:
+    aws_instance_number: "{{ groups['all'].index(inventory_hostname) + 1 }}"
+
 - name: Setup Wordpress website
   ansible.builtin.command:
     argv:
@@ -66,7 +76,7 @@
       - core
       - install
       - "--url={{ ec2_public_ip }}"
-      - "--title={{ wordpress_title }}"
+      - "--title={{ wordpress_title }}{{ aws_instance_number }}"
       - "--admin_user={{ wordpress_admin_user }}"
       - "--admin_email={{ wordpress_admin_email }}"
       - "--prompt=admin_password"
