@@ -22,7 +22,7 @@ You need to :
 - have an account
 - create an **IAM user** that has the `AmazonEC2FullAccess` permissions enabled, then save it's credentials as `./.aws_credentials` (In the IAM Service).
 - you need to download your `.pem` ssh key under the name `cloud-1.pem` (In the EC2 Service under `Network & Security > Key Pairs`).
-- create an **Launch Template** with a **Security Group** that allows the ssh, http, and https rules. Has the `Roles` and `Name` tags to the value `inception_nodes`. Set the default machine as `Ubuntu 24.04`. (Optionnal)
+- create a **Launch Template** with a **Security Group** that allows the ssh, http, and https rules. Has the `Roles` and `Name` tags to the value `inception_nodes`. Set the default machine as `Ubuntu 24.04`. (Optionnal)
 
 
 
