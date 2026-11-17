@@ -35,6 +35,9 @@ services:
       - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:?Required}
       - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:?Required}
       - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:?Required}
+      - WORDPRESS_CONFIG_EXTRA=
+        define('WP_HOME', 'http://${EC2_PUBLIC_IP}');
+        define('WP_SITEURL', 'http://${EC2_PUBLIC_IP}');
     volumes:
       - wp_data:/var/www/html
     networks:

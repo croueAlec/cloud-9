@@ -27,7 +27,6 @@
     msg: "The variable '{{ item }}' is null or undefined"
   loop:
     - inception_machine_user_password
-    - ec2_public_ip
     - vault_mariadb_database
     - vault_mariadb_user
     - vault_mariadb_password
