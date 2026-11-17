@@ -1,4 +1,5 @@
-TEST_INVENTORY_FILENAME=./inventory/test_hosts.yml
+TEST_INVENTORY_FILENAME=./inventory/hosts.yml
+INVENTORY_FILENAME=./inventory/aws_ec2.yml
 
 SECRETS_FILENAME=secrets.yml
 PLAYBOOK_FILENAME=playbook.yml
@@ -17,3 +18,11 @@ test_aplp:
 
 aplp:
 	@ansible-playbook ${PLAYBOOK_FILENAME} --ask-vault-pass
+
+test_inventory:
+	@ansible-inventory -i ${TEST_INVENTORY_FILENAME} --graph
+
+inventory:
+	@ansible-inventory -i ${INVENTORY_FILENAME} --graph
+
+.PHONY: inventory
