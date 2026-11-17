@@ -8,17 +8,6 @@ RUN	apt-get update && apt-get upgrade -y && \
 
 ENV PATH="/root/.local/bin:$PATH"
 
-# Ansible installation
-# RUN	apt-get update && apt-get upgrade -y && \
-# 	apt-get install -y python3-pip python3-venv boto3 botocore && \
-# 	python3 -m pip install pipx && \
-# 	python3 -m pipx ensurepath && \
-# 	python3 -m pipx install --include-deps ansible && \
-# 	pip3 install argcomplete && \
-# 	activate-global-python-argcomplete && \
-# 	ansible-galaxy collection install amazon.aws && \
-# 	apt-get clean
-
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get install -y python3-pip python3-venv && \
 	python3 -m pip install --break-system-packages pipx argcomplete && \
@@ -47,6 +36,6 @@ RUN	chmod 600 /root/.ssh/ssh_key
 FROM base AS aws
 
 ENV CONTROL_NODE_STATUS="aws"
-RUN mkdir -p ~/.aws/ /root/.ssh && chmod 700 /root/.ssh
-COPY .aws_credentials ~/.aws/credentials
+RUN mkdir -p /root/.aws/ /root/.ssh && chmod 700 /root/.ssh
+COPY .aws_credentials /root/.aws/credentials
 COPY --chmod=0600 cloud-1.pem /root/.ssh/ssh_key
