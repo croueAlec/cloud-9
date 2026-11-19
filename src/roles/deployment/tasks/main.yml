@@ -62,7 +62,7 @@
 
 - name: Assign instance numbers
   ansible.builtin.set_fact:
-    aws_instance_number: "{{ groups['all'].index(inventory_hostname) + 1 }}"
+    instance_number: "{{ groups['all'].index(inventory_hostname) + 1 }}"
 
 - name: Setup Wordpress website
   ansible.builtin.command:
@@ -76,7 +76,7 @@
       - core
       - install
       - "--url={{ ansible_host }}"
-      - "--title={{ wordpress_title }}{{ aws_instance_number }}"
+      - "--title={{ wordpress_title }}{{ instance_number }}"
       - "--admin_user={{ wordpress_admin_user }}"
       - "--admin_email={{ wordpress_admin_email }}"
       - "--prompt=admin_password"
